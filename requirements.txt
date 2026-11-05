@@ -1,0 +1,8 @@
+Flask>=3.0
+Pillow>=10.3
+requests>=2.31
+openpyxl>=3.1             # planilha do financeiro (.xlsx)
+tzdata>=2024.1   # fuso horário no Windows
+# Servidor de produção (use um dos dois conforme o sistema):
+gunicorn>=22.0; sys_platform != "win32"
+waitress>=3.0; sys_platform == "win32"

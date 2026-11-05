@@ -1,0 +1,4 @@
+pytest
+# opcionais (os testes correspondentes são pulados se faltarem):
+opencv-python-headless
+numpy

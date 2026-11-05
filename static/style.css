@@ -1,0 +1,383 @@
+/* =====================================================================
+   Estilo MOBILE-FIRST: tudo aqui fora das @media é o layout do celular
+   (a maioria dos clientes). Telas maiores só ACRESCENTAM regras, com
+   @media (min-width: ...), no final de cada bloco.
+   ===================================================================== */
+:root {
+  --vermelho: #d62300;
+  --vermelho-escuro: #a31a00;
+  --amarelo: #ffc72c;
+  --creme: #fff8e7;
+  --grafite: #27251f;
+  --cinza: #6b665c;
+  --raio: 16px;
+  --toque: 44px;                                    /* tamanho mínimo de alvo de toque */
+  --seguro: env(safe-area-inset-bottom, 0px);       /* barra inferior do iPhone */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Trebuchet MS", sans-serif;
+  line-height: 1.35;
+  background: var(--creme);
+  color: var(--grafite);
+  padding-bottom: calc(84px + var(--seguro));      /* espaço para a barra do carrinho */
+  -webkit-tap-highlight-color: transparent;
+}
+
+button, input, select { font: inherit; }
+button { touch-action: manipulation; }              /* sem atraso de toque duplo */
+input, select { font-size: 16px; }                  /* menos de 16px faz o iPhone dar zoom */
+
+/* ------------------------------------------------------------- topo */
+.topo {
+  background: var(--vermelho);
+  color: #fff;
+  text-align: center;
+  padding: 14px 16px 12px;
+  border-bottom: 5px solid var(--amarelo);
+}
+.topo h1 { margin: 0; font-size: 1.35rem; letter-spacing: .3px; text-transform: uppercase; }
+.topo p { margin: 4px 0 0; font-size: .9rem; opacity: .92; }
+
+/* ------------------------------------------------------------- abas */
+.abas {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 10px 12px;
+  background: var(--grafite);
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+.abas::-webkit-scrollbar { display: none; }
+.aba {
+  flex: 0 0 auto;
+  min-height: var(--toque);
+  border: 0;
+  border-radius: 999px;
+  padding: 0 18px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #3b382f;
+  color: #fff;
+}
+.aba.ativa { background: var(--amarelo); color: var(--grafite); }
+
+/* -------------------------------------------------------- conteúdo */
+main { max-width: 1000px; margin: 0 auto; padding: 4px 12px; }
+main h2 { margin: 14px 0 10px; font-size: 1.3rem; text-transform: uppercase; color: var(--vermelho-escuro); }
+
+.aviso {
+  margin: 10px 12px 0;
+  padding: 12px 14px;
+  background: var(--amarelo);
+  color: var(--grafite);
+  font-weight: 800;
+  border-radius: 12px;
+}
+.aviso[hidden] { display: none; }
+
+/* ----------------------------------------------------- botões */
+.btn {
+  min-height: var(--toque);
+  border: 0;
+  border-radius: 999px;
+  padding: 0 20px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.btn:active { transform: translateY(1px); }
+.btn:disabled { opacity: .55; cursor: not-allowed; }
+.btn-vermelho { background: var(--vermelho); color: #fff; }
+.btn-amarelo { background: var(--amarelo); color: var(--grafite); }
+.btn-claro { background: #eee7d3; color: var(--grafite); }
+
+/* ---------------------------------------- produtos (celular: lista) */
+.grade { display: grid; grid-template-columns: 1fr; gap: 10px; }
+
+.card {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  grid-template-areas: "visual info" "visual rodape";
+  gap: 6px 12px;
+  align-content: start;
+  background: #fff;
+  border-radius: var(--raio);
+  padding: 10px;
+  box-shadow: 0 2px 0 rgba(0, 0, 0, .1);
+}
+.card .visual {
+  grid-area: visual;
+  position: relative;
+  width: 96px;
+  height: 96px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff3d6;
+  display: grid;
+  place-items: center;
+}
+.card .visual.emoji { font-size: 3rem; line-height: 1; }
+.card .foto { display: block; width: 100%; height: 100%; object-fit: cover; }
+.card .info { grid-area: info; min-width: 0; }
+.card h3 { margin: 0; font-size: 1rem; }
+.card p {
+  margin: 2px 0 0;
+  font-size: .85rem;
+  color: var(--cinza);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.card .rodape {
+  grid-area: rodape;
+  align-self: end;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+.preco { font-size: 1.1rem; font-weight: 800; color: var(--vermelho); }
+
+.card.indisponivel .visual,
+.card.indisponivel .info { opacity: .5; }
+.card.indisponivel .foto { filter: grayscale(1); }
+.badge-esgotado {
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  background: var(--grafite);
+  color: #fff;
+  font-size: .62rem;
+  font-weight: 800;
+  padding: 2px 7px;
+  border-radius: 999px;
+  text-transform: uppercase;
+}
+
+.qtd { display: flex; align-items: center; gap: 8px; }
+.qtd button {
+  width: var(--toque);
+  height: var(--toque);
+  border-radius: 50%;
+  border: 0;
+  font-size: 1.4rem;
+  font-weight: 800;
+  cursor: pointer;
+  background: var(--amarelo);
+  color: var(--grafite);
+}
+.qtd span { min-width: 22px; text-align: center; font-weight: 800; }
+
+/* ------------------------------------------- barra do carrinho (fixa) */
+.barra {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 16px calc(10px + var(--seguro));
+  background: var(--vermelho);
+  color: #fff;
+  font-weight: 800;
+  border-top: 4px solid var(--amarelo);
+  z-index: 10;
+}
+.barra[hidden] { display: none; }
+
+/* ---------------------- janelas (no celular sobem de baixo, "gaveta") */
+dialog {
+  border: 0;
+  padding: 18px 16px calc(18px + var(--seguro));
+  width: 100%;
+  max-width: 100%;
+  max-height: 92vh;
+  max-height: 92dvh;
+  margin: auto 0 0;
+  border-radius: 20px 20px 0 0;
+  background: var(--creme);
+  color: var(--grafite);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+dialog h2 { margin: 0 0 8px; color: var(--vermelho-escuro); }
+
+.lista { list-style: none; margin: 0 0 12px; padding: 0; }
+.lista li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 10px 0;
+  border-bottom: 1px dashed #d9d0b8;
+}
+.lista .nome { grid-column: 1 / -1; font-weight: 700; }
+
+.obs { display: block; margin-bottom: 10px; font-weight: 700; font-size: .9rem; }
+.obs[hidden] { display: none; }
+.obs input {
+  display: block;
+  width: 100%;
+  min-height: var(--toque);
+  margin-top: 6px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 2px solid #d9d0b8;
+  background: #fff;
+}
+
+.tipo { border: 0; padding: 0; margin: 0 0 12px; display: flex; gap: 8px; flex-wrap: wrap; }
+.tipo legend { padding: 0; margin-bottom: 6px; font-weight: 700; font-size: .9rem; }
+.tipo .opcao {
+  flex: 1 1 140px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: var(--toque);
+  padding: 8px 12px;
+  border: 2px solid #d9d0b8;
+  border-radius: 12px;
+  background: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+.tipo .opcao input { width: 20px; height: 20px; }
+.tipo .opcao:has(input:checked) { border-color: var(--vermelho); background: #fff1ee; }
+
+.total { margin: 8px 0 12px; font-size: 1.3rem; text-align: right; }
+.acoes { display: flex; flex-direction: column; gap: 8px; }   /* botões grandes, um sobre o outro */
+
+#modal-senha { text-align: center; }
+.senha {
+  margin: 8px 0 14px;
+  padding: 6px 0;
+  border-radius: var(--raio);
+  background: var(--amarelo);
+  color: var(--vermelho);
+  font-size: 4rem;
+  font-weight: 900;
+}
+
+/* ================================================== telas maiores ==== */
+@media (min-width: 640px) {
+  body { padding-bottom: 96px; }
+  .topo { padding: 22px 16px 18px; }
+  .topo h1 { font-size: 2rem; }
+  .topo p { font-size: 1rem; }
+  main { padding: 8px 16px; }
+  .abas { padding: 12px 16px; }
+
+  /* cards viram colunas, com a foto em cima */
+  .grade { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; }
+  .card {
+    grid-template-columns: 1fr;
+    grid-template-areas: "visual" "info" "rodape";
+    padding: 16px;
+    gap: 8px;
+  }
+  .card .visual { width: 100%; height: 150px; }
+  .card .visual.emoji { font-size: 4rem; }
+  .card h3 { font-size: 1.15rem; }
+  .card:hover { box-shadow: 0 0 0 2px var(--amarelo), 0 2px 0 rgba(0, 0, 0, .1); }
+  .badge-esgotado { top: 8px; left: 8px; font-size: .8rem; padding: 4px 10px; }
+
+  .barra { padding: 12px 24px; }
+
+  /* janela centralizada */
+  dialog {
+    width: min(480px, 92vw);
+    margin: auto;
+    padding: 24px;
+    border-radius: var(--raio);
+  }
+  .lista li { grid-template-columns: 1fr auto auto; }
+  .lista .nome { grid-column: auto; }
+  .acoes { flex-direction: row-reverse; justify-content: flex-start; }
+  .senha { font-size: 4.5rem; }
+}
+
+@media (min-width: 1000px) {
+  .grade { grid-template-columns: repeat(4, 1fr); }
+}
+/* ---- loja fechada, pagamento, taxa e pedido mínimo ---- */
+.aviso-fechado { background: #fee2e2; color: #7f1d1d; }
+.opcoes-pagamento { display: flex; gap: 8px; flex-wrap: wrap; width: 100%; }
+.opcoes-pagamento .opcao { flex: 1 1 110px; }
+.tipo legend small { font-weight: 400; color: var(--cinza); }
+.obs small { font-weight: 400; color: var(--cinza); }
+.linha-valores { display: flex; justify-content: space-between; margin: 4px 0; font-weight: 700; }
+.linha-valores[hidden], .msg-minimo[hidden], #campo-troco[hidden] { display: none; }
+.msg-minimo { margin: 6px 0; padding: 8px 12px; border-radius: 10px; background: #fff3cd; color: #7a4b00; font-weight: 700; font-size: .9rem; }
+
+/* ---- endereço em campos separados ---- */
+.linha-campos { display: flex; gap: 10px; }
+.linha-campos .obs { flex: 1; min-width: 0; }
+.linha-campos .campo-numero { flex: 0 0 34%; }
+.check-linha { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; font-size: .9rem; }
+.check-linha input { width: auto; margin: 0; }
+.obs input.invalido { border-color: #dc2626; background: #fef2f2; }
+.msg-campo { color: #b91c1c; font-size: .85rem; font-weight: 700; margin: -6px 0 10px; }
+.msg-campo[hidden] { display: none; }
+.obs input:disabled { background: #e5e7eb; color: #9ca3af; cursor: not-allowed; }
+
+.campo-bairro select { width: 100%; padding: 12px; border: 2px solid #e5d9b8; border-radius: 10px; font-size: 1rem; background: #fff; box-sizing: border-box; margin-top: 4px; font-family: inherit; }
+.campo-bairro select[hidden] { display: none; }
+.campo-bairro select.invalido { border-color: #dc2626; background: #fef2f2; }
+.obs input[hidden] { display: none; }
+
+/* ---- adicionais e retiradas ---- */
+#modal-opcoes { border: 0; border-radius: 16px; padding: 18px; width: min(92vw, 420px); }
+#modal-opcoes::backdrop { background: rgba(0,0,0,.55); }
+#modal-opcoes h2 { margin: 0 0 8px; }
+.grupo-opcoes[hidden] { display: none; }
+.grupo-opcoes h3 { margin: 12px 0 6px; font-size: 1rem; color: var(--cinza); }
+.opcao-linha { display: flex; align-items: center; gap: 10px; padding: 10px 6px; border-bottom: 1px solid #eee; font-size: 1rem; }
+.opcao-linha input { width: 22px; height: 22px; }
+.acoes-opcoes { display: flex; gap: 10px; margin-top: 16px; }
+.acoes-opcoes .btn { flex: 1; }
+.det-opcoes { display: block; font-weight: 400; color: var(--cinza); margin-top: 2px; }
+#link-acompanhar[hidden] { display: none; }
+
+.aviso-produto { display: block; margin-top: 4px; color: #9a3412; font-weight: 700; }
+.aviso-produto.restam { color: #b91c1c; }
+
+#cli-horario { width: 100%; padding: 12px; border: 2px solid #e5d9b8; border-radius: 10px; font-size: 1rem; background: #fff; box-sizing: border-box; font-family: inherit; margin-top: 6px; }
+#cli-horario[hidden] { display: none; }
+#cli-horario.invalido { border-color: #dc2626; background: #fef2f2; }
+#bloco-agendar[hidden] { display: none; }
+
+/* ---- cupom ---- */
+.cupom-linha { display: flex; gap: 8px; margin-top: 4px; }
+.cupom-linha input { flex: 1; min-width: 0; text-transform: uppercase; }
+.cupom-linha .btn { white-space: nowrap; }
+.msg-cupom { margin: 6px 0; padding: 8px 12px; border-radius: 10px; background: #dcfce7; color: #166534; font-weight: 700; font-size: .9rem; }
+.msg-cupom.erro { background: #fee2e2; color: #991b1b; }
+.msg-cupom[hidden] { display: none; }
+.linha-valores.desconto { color: #166534; }
+
+/* ---- instalar app ---- */
+.btn-instalar { margin-top: 8px; background: #fff; color: #b91c1c; border: 0; border-radius: 999px; padding: 8px 16px; font-weight: 800; cursor: pointer; }
+.btn-instalar[hidden], .dica-instalar[hidden] { display: none; }
+.dica-instalar { margin: 8px 0 0; padding: 8px 12px; background: rgba(255,255,255,.95); color: #7c2d12; border-radius: 10px; font-size: .85rem; }
+
+.aviso-preparo { background: #ecfdf5; color: #065f46; border: 1px solid #6ee7b7; }
+.aviso-preparo[hidden] { display: none; }
+
+.aviso-mesa { background: #ede9fe; color: #5b21b6; border: 1px solid #c4b5fd; font-weight: 800; }
+.aviso-mesa[hidden] { display: none; }
+fieldset.tipo[hidden] { display: none; }
+
+.aviso-cupom { background: #fce7f3; color: #9d174d; border: 1px solid #f9a8d4; font-weight: 800; }
+.aviso-cupom[hidden], .btn-repetir[hidden], .msg-fid[hidden] { display: none; }
+.btn-repetir { display: block; width: calc(100% - 32px); margin: 8px 16px; padding: 12px; border: 2px dashed #d62300; background: #fff; color: #b91c1c; border-radius: 12px; font-weight: 800; font-size: 1rem; cursor: pointer; text-align: left; }

@@ -1,0 +1,32 @@
+* { box-sizing: border-box; }
+body { margin: 0; background: #111827; color: #f9fafb; font-family: system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column; }
+.topo { display: flex; align-items: center; gap: 16px; padding: 12px 20px; background: #1f2937; flex-wrap: wrap; }
+.topo h1 { margin: 0; font-size: 1.4rem; flex: 1; }
+.relogio { font-size: 1.6rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.som { font-size: 1rem; }
+.topo button, .voltar { background: #374151; color: #fff; border: 0; border-radius: 8px; padding: 10px 14px; font-size: 1rem; cursor: pointer; text-decoration: none; }
+.aviso { background: #7f1d1d; color: #fff; margin: 0; padding: 10px 20px; font-weight: 700; }
+.aviso[hidden] { display: none; }
+.quadro { flex: 1; display: grid; grid-template-columns: 1fr 1fr 0.7fr; gap: 14px; padding: 14px; min-height: 0; }
+.coluna { background: #1f2937; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; min-height: 0; }
+.coluna h2 { margin: 0 0 10px; font-size: 1.3rem; display: flex; align-items: center; gap: 10px; }
+.cont { background: #374151; border-radius: 999px; padding: 2px 12px; font-size: 1.1rem; }
+.lista { overflow-y: auto; display: grid; gap: 12px; align-content: start; flex: 1; }
+.vazio { color: #9ca3af; text-align: center; padding: 30px 0; font-size: 1.1rem; }
+.ficha { background: #f9fafb; color: #111827; border-radius: 12px; padding: 14px; border-left: 12px solid #22c55e; }
+.ficha.atencao { border-left-color: #f59e0b; }
+.ficha.atrasado { border-left-color: #dc2626; }
+.ficha-topo { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+.senha { font-size: 2.2rem; font-weight: 900; }
+.tipo { font-weight: 800; background: #e5e7eb; border-radius: 6px; padding: 2px 10px; }
+.tempo { margin-left: auto; font-size: 1.3rem; font-weight: 800; }
+.nome { color: #4b5563; margin: 2px 0 8px; }
+.itens { list-style: none; margin: 0 0 8px; padding: 0; font-size: 1.5rem; font-weight: 700; display: grid; gap: 4px; }
+.itens .qtd { display: inline-block; min-width: 2.2ch; color: #dc2626; }
+.obs { background: #fef3c7; border: 2px dashed #f59e0b; border-radius: 8px; padding: 8px 10px; font-size: 1.2rem; font-weight: 700; margin-bottom: 10px; }
+.acao { width: 100%; font-size: 1.4rem; font-weight: 800; padding: 14px; border: 0; border-radius: 10px; cursor: pointer; color: #fff; background: #2563eb; }
+.acao.pronto { background: #16a34a; }
+.acao[disabled] { opacity: .5; }
+.estreita .ficha { padding: 10px; } .estreita .senha { font-size: 1.8rem; } .estreita .itens { font-size: 1.05rem; font-weight: 600; }
+@media (max-width: 900px) { .quadro { grid-template-columns: 1fr; } }
+.itens .opcoes { display: block; font-size: 1.1rem; font-weight: 800; color: #b45309; margin-left: 2.4ch; }

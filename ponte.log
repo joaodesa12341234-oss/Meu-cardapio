@@ -1,0 +1,14 @@
+Lendo C:\Users\Cliente\Downloads\Meu cardapio\CD node.js\ponte_whatsapp\.env
+
+A porta 8080 já está em uso. Provavelmente a ponte já está aberta em outra janela.
+Feche as outras janelas da ponte (ou rode: netstat -ano | findstr :8080) e abra de novo.
+
+Press any key to continue . . . Lendo C:\Users\Cliente\Downloads\Meu cardapio\CD node.js\ponte_whatsapp\.env
+Ponte WhatsApp ouvindo em http://127.0.0.1:8080 (instância "lanchonete")
+✔ WhatsApp conectado. Pode usar o cardápio.
+Press any key to continue . . . Lendo C:\Users\Cliente\Downloads\Meu cardapio\CD node.js\ponte_whatsapp\.env
+Ponte WhatsApp ouvindo em http://127.0.0.1:8080 (instância "lanchonete")
+✔ WhatsApp conectado. Pode usar o cardápio.
+Lendo C:\Users\Cliente\Downloads\Meu cardapio\CD node.js\ponte_whatsapp\.env
+Ponte WhatsApp ouvindo em http://127.0.0.1:8080 (instância "lanchonete")
+✔ WhatsApp conectado. Pode usar o cardápio.

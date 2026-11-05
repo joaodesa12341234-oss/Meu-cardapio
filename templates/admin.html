@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="csrf-token" content="{{ csrf }}">
+  <title>Painel - {{ nome }}</title>
+  <link rel="manifest" href="/admin/manifest.webmanifest">
+  <meta name="theme-color" content="#d62300">
+  <link rel="stylesheet" href="{{ asset('style.css') }}">
+  <link rel="stylesheet" href="{{ asset('admin.css') }}">
+</head>
+<body class="admin-body">
+  <header class="topo-admin">
+    <h1>Painel — <span id="nome-loja-header">{{ nome }}</span></h1>
+    <div class="user-info">
+      <a href="/" target="_blank" class="link-loja">Ver cardápio ↗</a>
+      <a href="/admin/cozinha" target="_blank" class="link-loja">🍳 Tela da cozinha ↗</a>
+      <span>👤 {{ usuario }} · {{ papel }}</span>
+      <form action="/admin/logout" method="POST" class="form-sair">
+        <input type="hidden" name="csrf" value="{{ csrf }}">
+        <button type="submit" class="btn-sair">Sair</button>
+      </form>
+    </div>
+  </header>
+
+  <nav class="nav-admin">
+    <button id="btn-tab-pedidos" class="tab-btn ativa">📄 Pedidos <span id="cont-novos" class="badge" hidden>0</span></button>
+    {% if pode_cardapio %}
+    <button id="btn-tab-cardapio" class="tab-btn">🍔 Cardápio</button>
+    <button id="btn-tab-loja" class="tab-btn">🏪 Loja</button>
+    <button id="btn-tab-financeiro" class="tab-btn">💰 Financeiro</button>
+    <button id="btn-tab-historico" class="tab-btn">📜 Histórico</button>
+    {% endif %}
+    <span id="wa-status" class="wa-status" title="Estado da conexão com o WhatsApp">WhatsApp: verificando…</span>
+    <button id="btn-instalar" type="button" class="btn btn-claro btn-instalar-painel" hidden>📲 Instalar como app</button>
+    <label class="som-toggle">
+      <input type="checkbox" id="som" checked> 🔔 Som de novos pedidos
+    </label>
+  </nav>
+
+  <main class="conteudo-admin">
+    <div id="wa-faixa" class="wa-faixa" role="alert" hidden></div>
+
+    <!-- ABA PEDIDOS (KANBAN) -->
+<section id="aba-pedidos">
+  <div id="atualizado" class="subtitulo-status">Carregando pedidos...</div>
+  {% if pode_cardapio %}
+  <div id="banner-antigos" class="banner-antigos" role="alert" hidden>
+    <span id="banner-antigos-texto"></span>
+    <button id="btn-antigos-concluir" type="button" class="btn btn-claro">Marcar como entregues</button>
+    <button id="btn-antigos-cancelar" type="button" class="btn btn-perigo">Cancelar todos</button>
+  </div>
+  {% endif %}
+  <div id="chips-estoque" class="chips-estoque" hidden></div>
+  <section id="agendados" class="agendados" hidden>
+    <h3>📅 Agendados <small>(entram em "Novos" perto do horário)</small></h3>
+    <div id="lista-agendados" class="lista-agendados"></div>
+  </section>
+  <div class="kanban-board">
+    <div class="kanban-coluna" data-status="novo">
+      <h3>Novos</h3>
+      <div id="fila-novo" class="kanban-conteudo" data-status="novo"></div>
+    </div>
+    <div class="kanban-coluna" data-status="fazendo">
+      <h3>Fazendo</h3>
+      <div id="fila-fazendo" class="kanban-conteudo" data-status="fazendo"></div>
+    </div>
+    <div class="kanban-coluna" data-status="pronto">
+      <h3>Pronto</h3>
+      <div id="fila-pronto" class="kanban-conteudo" data-status="pronto"></div>
+    </div>
+    <div class="kanban-coluna" data-status="saiu">
+      <h3>Saiu para entrega</h3>
+      <div id="fila-saiu" class="kanban-conteudo" data-status="saiu"></div>
+    </div>
+  </div>
+</section>
+    <!-- ABA CARDÁPIO (categorias, produtos e estoque) -->
+    {% if pode_cardapio %}
+    <section id="aba-cardapio" hidden>
+      <div class="painel-cardapio">
+        <div class="card-admin card-largo" id="card-insumos">
+          <h3>🍞 Estoque geral <small>(pães e outros)</small></h3>
+          <p class="fin-nota">Uma contagem só para vários produtos: cada lanche vendido gasta pão daqui. Quando o pão acaba, todos os lanches que usam ele saem do cardápio sozinhos, e voltam quando você repõe. Cancelar um pedido devolve o pão.</p>
+          <div id="lista-insumos" class="lista-insumos"></div>
+          <form id="form-novo-insumo" class="form-inline">
+            <input id="ins-nome" maxlength="30" placeholder="Nome (ex.: Pão)" required>
+            <input id="ins-qtd" type="number" min="0" max="99999" step="1" placeholder="Quantidade agora" required>
+            <input id="ins-min" type="number" min="0" max="99999" step="1" placeholder="Avisar quando restar (10)" title="Você recebe um aviso no WhatsApp quando chegar nesta quantidade">
+            <button type="submit" class="btn btn-vermelho">Criar estoque</button>
+          </form>
+          <form id="form-vincular" class="form-inline" hidden>
+            <span>Fazer todos os produtos de</span>
+            <select id="vinc-categoria"></select>
+            <span>gastarem</span>
+            <input id="vinc-consumo" type="number" min="1" max="50" step="1" value="1">
+            <span>de</span>
+            <select id="vinc-insumo"></select>
+            <button type="submit" class="btn btn-claro">Aplicar à categoria</button>
+          </form>
+        </div>
+
+        <div class="card-admin">
+          <h3>Nova Categoria</h3>
+          <form id="form-nova-categoria" class="form-inline">
+            <input id="cat-icone" placeholder="Emoji (ex: 🍔)" class="campo-emoji" required>
+            <input id="cat-nome" placeholder="Nome da Categoria (ex: Hambúrgueres)" required>
+            <button type="submit" class="btn btn-vermelho">Criar Categoria</button>
+          </form>
+        </div>
+
+        <div class="card-admin">
+  <h3 id="titulo-form-produto">Novo Produto</h3>
+  <form id="form-novo-produto" class="form-grid">
+    <select id="prod-categoria" required>
+      <option value="">Selecione a Categoria...</option>
+    </select>
+    <input id="prod-nome" placeholder="Nome do produto" required>
+    <input id="prod-preco" type="number" step="0.01" placeholder="Preço (ex: 18.90)" required>
+    <input id="prod-custo" inputmode="decimal" maxlength="9" placeholder="Custo (opcional, p/ calcular lucro)" title="Quanto custa produzir 1 unidade. Só você vê; aparece no Financeiro.">
+    <input id="prod-emoji" placeholder="Emoji (ex: 🍔)">
+    <input id="prod-estoque" type="number" min="0" max="99999" step="1" placeholder="Estoque (opcional)" title="Quantas unidades você tem. Cada pedido desconta; ao zerar, o item some do cardápio sozinho. Vazio = sem controle.">
+    <label class="campo-insumo">Gasta do estoque geral <small>(ex.: pão)</small>
+      <span class="par-horas">
+        <select id="prod-insumo"><option value="">Não usa estoque geral</option></select>
+        <input id="prod-consumo" type="number" min="1" max="50" step="1" value="1" title="Quantas unidades de estoque geral cada unidade vendida gasta (ex.: combo duplo = 2 pães)" hidden>
+      </span>
+    </label>
+    <label class="campo-janela">Vender só entre <small>(opcional)</small>
+      <span class="par-horas"><input id="prod-janela-ini" type="time"> às <input id="prod-janela-fim" type="time"></span>
+    </label>
+    
+    <!-- CAMPO DE UPLOAD DE FOTO ADICIONADO AQUI -->
+    <div class="campo-foto">
+      <label for="prod-foto" class="rotulo-foto">Foto do Produto (opcional):</label>
+      <input id="prod-foto" type="file" accept="image/png, image/jpeg, image/webp, image/gif">
+      <img id="prod-foto-atual" class="foto-atual" alt="Foto atual" hidden>
+      <label id="rotulo-remover-foto" class="remover-foto" hidden>
+        <input id="prod-remover-foto" type="checkbox"> Remover a foto atual
+      </label>
+    </div>
+
+    <label class="campo-opcoes">Adicionais <small>(um por linha: <code>Bacon; 3,00</code> — o preço vai somar ao lanche; sem valor = grátis)</small>
+      <textarea id="prod-extras" rows="3" maxlength="1200" placeholder="Bacon; 3,00&#10;Queijo extra; 2,50"></textarea>
+    </label>
+    <label class="campo-opcoes">O cliente pode tirar <small>(um ingrediente por linha)</small>
+      <textarea id="prod-sem" rows="3" maxlength="600" placeholder="Cebola&#10;Tomate&#10;Maionese"></textarea>
+    </label>
+    <textarea id="prod-desc" placeholder="Descrição do produto"></textarea>
+    <button id="btn-salvar-produto" type="submit" class="btn btn-vermelho">Cadastrar Produto</button>
+    <button id="btn-cancelar-edicao" type="button" class="btn btn-claro" hidden>Cancelar edição</button>
+  </form>
+</div>
+
+        <div class="card-admin">
+          <h3>Itens do Cardápio</h3>
+          <div id="lista-gestao-cardapio">Carregando cardápio...</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABA LOJA (nome, horários/entrega, QR code) -->
+    <section id="aba-loja" hidden>
+      <div class="painel-cardapio">
+        <div class="card-admin">
+          <h3>Nome da Lanchonete</h3>
+          <form id="form-nome-loja" class="form-inline">
+            <input id="input-nome-loja" value="{{ nome }}" required>
+            <button type="submit" class="btn btn-vermelho">Salvar Nome</button>
+          </form>
+        </div>
+
+        <div class="card-admin card-largo" id="card-loja">
+          <h3>Funcionamento e entrega</h3>
+          <p id="loja-estado" class="subtitulo-status">Carregando...</p>
+          <form id="form-loja" class="form-loja">
+            <label class="loja-modo">Modo de funcionamento
+              <select id="loja-modo">
+                <option value="sempre">Sempre aberta (ignora os horários)</option>
+                <option value="horario">Seguir os horários abaixo</option>
+                <option value="fechado">Fechada agora (manual)</option>
+              </select>
+            </label>
+            <div id="loja-dias" class="loja-dias"></div>
+            <div class="loja-valores">
+              <label>Taxa de entrega (R$) <input id="loja-taxa" inputmode="decimal" maxlength="8" placeholder="0,00"></label>
+              <label>Pedido mínimo (R$) <input id="loja-minimo" inputmode="decimal" maxlength="8" placeholder="0,00"></label>
+            </div>
+            <label class="loja-modo">Bairros atendidos
+              <select id="loja-bairros-modo">
+                <option value="livre">Qualquer bairro (usa a taxa única acima)</option>
+                <option value="lista">Só os bairros da lista (cada um com sua taxa)</option>
+              </select>
+            </label>
+            <label class="loja-modo">Lista de bairros <small>(um por linha: <code>Centro; 5,00</code> — sem valor, usa a taxa única)</small>
+              <textarea id="loja-bairros" rows="6" maxlength="6000" placeholder="Centro; 5,00&#10;Alto da Boa Vista; 7,00&#10;Vila Nova; 0"></textarea>
+            </label>
+            <label class="loja-modo">WhatsApp do dono <small>(recebe um aviso a cada pedido novo; deixe vazio para desligar)</small>
+              <input id="loja-dono" type="tel" inputmode="tel" maxlength="20" placeholder="(75) 98765-4321">
+            </label>
+            <label class="check-config"><input id="loja-agendamento" type="checkbox"> Aceitar pedidos agendados (o cliente escolhe um horário nas próximas 48 h, dentro do funcionamento)</label>
+            <div class="loja-valores">
+              <label>Antecedência mínima (min) <input id="loja-agend-minimo" type="number" min="0" max="720" step="5" placeholder="30"></label>
+              <label>Mostrar na cozinha (min antes) <input id="loja-agend-liberar" type="number" min="0" max="240" step="5" placeholder="40"></label>
+            </div>
+            <label class="loja-modo">Pedido atrasado após <small>(minutos sem andar; 0 desliga)</small>
+              <input id="loja-atraso" type="number" min="0" max="240" step="5" placeholder="30">
+            </label>
+            <label class="loja-modo">Relatório diário no WhatsApp <small>(horário; vazio desliga)</small>
+              <input id="loja-relatorio" type="time">
+            </label>
+            <p class="fin-nota">No horário escolhido você recebe no WhatsApp do dono o faturamento do dia, pedidos, mais vendidos e nota média. Precisa do "WhatsApp do dono" preenchido acima. <button id="btn-relatorio-agora" type="button" class="btn btn-claro">Enviar o de hoje agora</button></p>
+            <label class="loja-modo">Fidelidade: desconto a cada <small>(pedidos concluídos; 0 desliga)</small>
+              <input id="loja-fid-n" type="number" min="0" max="50" step="1" placeholder="0">
+            </label>
+            <label class="loja-modo">Desconto da fidelidade <small>(% sobre os lanches)</small>
+              <input id="loja-fid-pct" type="number" min="1" max="50" step="1" placeholder="10">
+            </label>
+            <p class="fin-nota">Exemplo: 5 pedidos e 10% → no 6º pedido o cliente (identificado pelo telefone) ganha 10% sozinho, somado a um cupom, se houver. Cancelar o pedido devolve o prêmio.</p>
+            <label class="loja-modo">Quantidade de mesas <small>(0 = sem pedido por mesa)</small>
+              <input id="loja-mesas" type="number" min="0" max="100" step="1" placeholder="0">
+            </label>
+            <p class="fin-nota">Com mesas ligadas, cada mesa tem seu QR code: o cliente escaneia, pede e o pedido chega na cozinha como "Mesa N", sem endereço nem taxa. <a href="/admin/cartaz-mesas" target="_blank">🖨 Abrir cartazes das mesas</a> (salve antes de abrir).</p>
+            <label class="loja-modo">Tempo de preparo mostrado ao cliente <small>(minutos; 0 esconde)</small>
+              <input id="loja-preparo" type="number" min="0" max="180" step="5" placeholder="20">
+            </label>
+            <p class="fin-nota">O cliente vê "pronto em cerca de X min". O sistema aprende com o tempo real dos seus últimos pedidos (depois de 5 pedidos prontos) e soma um pouco por cada pedido na fila. Este número vale enquanto ainda há poucos dados.</p>
+            <p class="fin-nota">Pedido "novo" ou "fazendo" há mais tempo que isso fica em destaque no painel e na cozinha, e o dono recebe um aviso no WhatsApp (uma vez por pedido).</p>
+            <p class="fin-nota">Horário que passa da meia-noite (ex.: abre 18:00, fecha 02:00) funciona. Com a loja fechada o cliente vê o cardápio, mas não consegue finalizar o pedido.</p>
+            <button type="submit" class="btn btn-vermelho">Salvar funcionamento</button>
+          </form>
+        </div>
+
+        <div class="card-admin card-largo" id="card-cupons">
+          <h3>🏷 Cupons de desconto</h3>
+          <p class="fin-nota">O cliente digita o código ao fechar o pedido. O desconto vale só sobre os lanches (a taxa de entrega não entra). Cancelar o pedido devolve o uso do cupom.</p>
+          <div id="lista-cupons" class="lista-cupons"></div>
+          <form id="form-cupom" class="form-cupom">
+            <label>Código <input id="cup-codigo" maxlength="20" placeholder="PRIMEIRA10" autocapitalize="characters" required></label>
+            <label>Tipo
+              <select id="cup-tipo"><option value="percentual">% de desconto</option><option value="valor">R$ de desconto</option></select>
+            </label>
+            <label><span id="cup-valor-rotulo">Quantos %</span> <input id="cup-valor" inputmode="decimal" maxlength="8" placeholder="10" required></label>
+            <label>Pedido mínimo (R$) <input id="cup-minimo" inputmode="decimal" maxlength="8" placeholder="0,00"></label>
+            <label>Vale até <input id="cup-validade" type="date"></label>
+            <label>Limite de usos <input id="cup-limite" type="number" min="1" max="1000000" step="1" placeholder="sem limite"></label>
+            <label class="marcar"><input id="cup-uma-vez" type="checkbox" checked> 1 uso por cliente (telefone)</label>
+            <label class="marcar"><input id="cup-primeira" type="checkbox"> Só para a primeira compra</label>
+            <button type="submit" class="btn btn-vermelho">Criar cupom</button>
+          </form>
+        </div>
+
+        <div class="card-admin card-largo" id="card-sumidos">
+          <h3>💤 Clientes sumidos</h3>
+          <p class="fin-nota">Quem já pediu, mas não volta há um tempo. Você escolhe a mensagem e envia, um cliente por vez (o mesmo cliente não recebe de novo antes de 14 dias). Mande só para quem já é seu cliente e evite exagerar, para não ser bloqueado no WhatsApp.</p>
+          <div class="sum-filtros">
+            <label>Sem pedir há
+              <select id="sum-dias"><option value="14">14 dias</option><option value="21" selected>21 dias</option><option value="30">30 dias</option><option value="60">60 dias</option><option value="90">90 dias</option></select>
+            </label>
+            <label>Cupom na mensagem <select id="sum-cupom"><option value="">Sem cupom</option></select></label>
+          </div>
+          <label class="sum-msg">Mensagem <small>({nome}, {loja} e {link} são trocados automaticamente)</small>
+            <textarea id="sum-mensagem" rows="3" maxlength="500"></textarea>
+          </label>
+          <ul id="sum-lista" class="sum-lista"></ul>
+          <p id="sum-vazio" class="fin-nota" hidden>Ninguém sumido por esse período. 🎉</p>
+        </div>
+
+        <div class="card-admin">
+          <h3>QR code do cardápio</h3>
+          <p class="fin-nota">Imprima um cartaz com o QR code para colar no balcão e nas mesas: o cliente aponta a câmera e abre o cardápio.</p>
+          <a class="btn btn-vermelho btn-link" href="/admin/cartaz" target="_blank">🖨 Abrir cartaz para imprimir</a>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ABA HISTÓRICO (quem mudou o quê) -->
+    <section id="aba-historico" hidden>
+      <div class="card-admin hist-box">
+        <h3>📜 Histórico de alterações</h3>
+        <p class="fin-nota">Registra quem mudou preço, estoque, cupons, configurações e o andamento dos pedidos. Guarda as últimas 20 mil anotações.</p>
+        <div class="hist-filtros">
+          <select id="hist-area" aria-label="Filtrar por área"><option value="">Todas as áreas</option></select>
+          <input id="hist-busca" maxlength="60" placeholder="Buscar (ex.: X-Burger, admin, #12)">
+          <button id="hist-aplicar" type="button" class="btn btn-vermelho">Filtrar</button>
+        </div>
+        <ul id="hist-lista" class="hist-lista"></ul>
+        <button id="hist-mais" type="button" class="btn btn-claro" hidden>Mostrar mais antigas</button>
+        <p id="hist-vazio" class="fin-nota" hidden>Nada registrado ainda.</p>
+      </div>
+    </section>
+
+    <!-- ABA FINANCEIRO (só administrador) -->
+    <section id="aba-financeiro" hidden>
+      <div class="fin-filtros card-admin">
+        <div class="fin-atalhos" id="fin-atalhos">
+          <button type="button" class="btn btn-claro" data-atalho="hoje">Hoje</button>
+          <button type="button" class="btn btn-claro" data-atalho="ontem">Ontem</button>
+          <button type="button" class="btn btn-claro" data-atalho="7">7 dias</button>
+          <button type="button" class="btn btn-claro" data-atalho="30">30 dias</button>
+          <button type="button" class="btn btn-claro" data-atalho="mes">Este mês</button>
+          <button type="button" class="btn btn-claro" data-atalho="mes-passado">Mês passado</button>
+        </div>
+        <div class="fin-datas">
+          <label>De <input id="fin-inicio" type="date"></label>
+          <label>Até <input id="fin-fim" type="date"></label>
+          <button id="fin-aplicar" type="button" class="btn btn-vermelho">Aplicar</button>
+          <a id="fin-xlsx" class="btn btn-vermelho btn-link" href="#">⬇ Baixar planilha (Excel)</a>
+          <a id="fin-csv" class="btn btn-claro btn-link" href="#">CSV simples</a>
+        </div>
+      </div>
+
+      <p id="fin-status" class="subtitulo-status">Carregando...</p>
+
+      <div class="fin-kpis">
+        <div class="kpi kpi-destaque"><span class="kpi-rotulo">Faturamento</span><strong id="kpi-faturamento">—</strong><small id="kpi-comparacao"></small></div>
+        <div class="kpi"><span class="kpi-rotulo">Lucro estimado</span><strong id="kpi-lucro">—</strong><small id="kpi-lucro-info"></small></div>
+        <div class="kpi"><span class="kpi-rotulo">Pedidos concluídos</span><strong id="kpi-pedidos">—</strong></div>
+        <div class="kpi"><span class="kpi-rotulo">Ticket médio</span><strong id="kpi-ticket">—</strong></div>
+        <div class="kpi"><span class="kpi-rotulo">Cancelados</span><strong id="kpi-cancelados">—</strong><small id="kpi-cancelados-valor"></small></div>
+        <div class="kpi"><span class="kpi-rotulo">Em andamento</span><strong id="kpi-andamento">—</strong><small id="kpi-andamento-valor"></small></div>
+      </div>
+
+      <div class="fin-grade">
+        <div class="card-admin fin-largo">
+          <h3>Faturamento por dia</h3>
+          <div id="fin-grafico-dias" class="grafico" role="img" aria-label="Faturamento por dia"></div>
+        </div>
+        <div class="card-admin">
+          <h3>Balcão x Entrega</h3>
+          <div id="fin-tipos"></div>
+        </div>
+        <div class="card-admin">
+          <h3>Mais vendidos</h3>
+          <div id="fin-top"></div>
+        </div>
+        <div class="card-admin">
+          <h3>Formas de pagamento</h3>
+          <div id="fin-pagamentos"></div>
+          <p id="fin-taxas" class="fin-nota"></p>
+        </div>
+        <div class="card-admin">
+          <h3>Entregas por bairro</h3>
+          <div id="fin-bairros"></div>
+        </div>
+        <div class="card-admin fin-largo" id="card-avaliacoes">
+          <h3>⭐ Avaliações dos clientes</h3>
+          <p id="aval-resumo" class="fin-nota">Carregando...</p>
+          <div id="aval-distribuicao"></div>
+          <ul id="aval-lista" class="aval-lista"></ul>
+        </div>
+        <div class="card-admin fin-largo">
+          <h3>Horários de pico <small>(pedidos concluídos por hora)</small></h3>
+          <div id="fin-grafico-horas" class="grafico grafico-horas" role="img" aria-label="Pedidos por hora do dia"></div>
+        </div>
+      </div>
+      <p class="fin-nota">Lucro estimado = vendas dos produtos menos o custo informado de cada um (a taxa de entrega não entra). O custo é guardado no momento da venda, então mudar o custo depois não altera o passado. O faturamento conta só pedidos marcados como <strong>Entregue</strong>. Cancelados e pedidos ainda em andamento aparecem à parte. Horários no fuso da loja.</p>
+    </section>
+    {% endif %}
+  </main>
+
+  <script src="{{ asset('pwa.js') }}" defer></script>
+  <script src="{{ asset('admin-pedidos.js') }}" defer></script>
+  {% if pode_cardapio %}<script src="{{ asset('admin-financeiro.js') }}" defer></script>{% endif %}
+</body>
+</html>

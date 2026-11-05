@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="referrer" content="no-referrer">
+  <title>Acompanhar pedido - {{ nome }}</title>
+  <link rel="stylesheet" href="{{ asset('acompanhar.css') }}">
+</head>
+<body data-token="{{ token }}">
+  <main class="caixa">
+    <p class="loja">{{ nome }}</p>
+    <h1>Pedido <span id="senha">#---</span></h1>
+    <p id="situacao" class="situacao">Carregando...</p>
+    <ol id="etapas" class="etapas"></ol>
+    <h2>Itens</h2>
+    <ul id="itens" class="itens"></ul>
+    <p class="total">Total: <strong id="total"></strong></p>
+    <section id="avaliar" class="avaliar" hidden>
+      <h2>Como foi o seu pedido?</h2>
+      <div id="estrelas" class="estrelas" role="radiogroup" aria-label="Nota de 1 a 5 estrelas"></div>
+      <input id="aval-comentario" maxlength="300" placeholder="Quer deixar um comentário? (opcional)">
+      <button id="aval-enviar" type="button" class="btn-aval" disabled>Enviar avaliação</button>
+      <p id="aval-msg" class="aval-msg" role="status"></p>
+    </section>
+    <p id="rodape" class="rodape">Esta página se atualiza sozinha.</p>
+  </main>
+  <script src="{{ asset('acompanhar.js') }}" defer></script>
+</body>
+</html>

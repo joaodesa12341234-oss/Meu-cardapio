@@ -1,0 +1,33 @@
+body { margin: 0; background: #fff8e7; font-family: system-ui, sans-serif; color: #2b1a10; }
+.caixa { max-width: 480px; margin: 0 auto; padding: 20px 16px 40px; }
+.loja { margin: 0; font-weight: 700; color: #7c2d12; text-transform: uppercase; letter-spacing: .05em; font-size: .85rem; }
+h1 { margin: 4px 0 6px; font-size: 1.8rem; }
+h2 { font-size: 1rem; margin: 22px 0 6px; color: #7c2d12; }
+.situacao { font-size: 1.2rem; font-weight: 800; margin: 0 0 16px; }
+.situacao.ok { color: #15803d; } .situacao.erro { color: #b91c1c; }
+.etapas { list-style: none; margin: 0; padding: 0; }
+.etapas li { position: relative; padding: 10px 0 10px 40px; color: #9a8f80; font-weight: 600; }
+.etapas li::before { content: ""; position: absolute; left: 6px; top: 12px; width: 18px; height: 18px; border-radius: 50%; background: #e5dcc8; border: 2px solid #e5dcc8; }
+.etapas li::after { content: ""; position: absolute; left: 14px; top: 32px; width: 2px; height: 22px; background: #e5dcc8; }
+.etapas li:last-child::after { display: none; }
+.etapas li.feita { color: #2b1a10; }
+.etapas li.feita::before { background: #16a34a; border-color: #16a34a; }
+.etapas li.feita::after { background: #16a34a; }
+.etapas li.atual { color: #b91c1c; font-weight: 800; font-size: 1.1rem; }
+.etapas li.atual::before { background: #fff; border-color: #dc2626; box-shadow: 0 0 0 4px #fecaca; }
+.itens { list-style: none; margin: 0; padding: 0; background: #fff; border-radius: 12px; }
+.itens li { padding: 10px 14px; border-bottom: 1px solid #f1e8d2; font-weight: 600; }
+.itens li:last-child { border-bottom: 0; }
+.itens small { display: block; font-weight: 400; color: #6b5b4b; }
+.total { text-align: right; font-size: 1.1rem; }
+.rodape { color: #8a7a68; font-size: .85rem; text-align: center; }
+
+.avaliar { margin-top: 22px; background: #fff; border-radius: 12px; padding: 4px 14px 16px; text-align: center; }
+.avaliar[hidden], #aval-comentario[hidden], #aval-enviar[hidden] { display: none; }
+.estrelas { display: flex; justify-content: center; gap: 4px; margin: 6px 0 10px; }
+.estrela { background: none; border: 0; font-size: 2.4rem; line-height: 1; color: #cbbf9f; cursor: pointer; padding: 2px 6px; }
+.estrela.cheia { color: #f59e0b; }
+#aval-comentario { width: 100%; box-sizing: border-box; padding: 10px; border: 2px solid #e5dcc8; border-radius: 10px; font: inherit; margin-bottom: 10px; }
+.btn-aval { background: #dc2626; color: #fff; border: 0; border-radius: 10px; padding: 12px 20px; font-weight: 800; font-size: 1rem; cursor: pointer; }
+.btn-aval:disabled { opacity: .45; cursor: default; }
+.aval-msg { margin: 10px 0 0; font-weight: 700; color: #7c2d12; }

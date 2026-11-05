@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#d62300">
+  <title>{{ nome }} — Cardápio</title>
+  <link rel="manifest" href="/manifest.webmanifest">
+  <link rel="apple-touch-icon" href="/icone/180.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="{{ nome }}">
+  <link rel="stylesheet" href="{{ asset('style.css') }}">
+</head>
+<body>
+  <header class="topo">
+    <h1>{{ nome }}</h1>
+    <p>Escolha, adicione e faça seu pedido!</p>
+    <button id="btn-instalar" type="button" class="btn-instalar" hidden>📲 Instalar o app</button>
+    <p id="dica-instalar" class="dica-instalar" hidden>No iPhone: toque em <b>Compartilhar</b> e depois em <b>Adicionar à Tela de Início</b>. No Android: menu do navegador → <b>Instalar app</b>.</p>
+  </header>
+
+  <nav id="abas" class="abas" aria-label="Categorias"></nav>
+
+  <p id="cupom-banner" class="aviso aviso-cupom" role="status" hidden></p>
+  <button id="btn-repetir" type="button" class="btn-repetir" hidden></button>
+  <p id="mesa-banner" class="aviso aviso-mesa" role="status" hidden></p>
+  <p id="preparo-loja" class="aviso aviso-preparo" role="status" hidden></p>
+  <p id="aviso-loja" class="aviso aviso-fechado" role="status" hidden></p>
+  <p id="aviso" class="aviso" role="status" hidden></p>
+
+  <main>
+    <h2 id="titulo-categoria"></h2>
+    <section id="produtos" class="grade"></section>
+  </main>
+
+  <footer id="barra" class="barra" hidden>
+    <span id="barra-resumo"></span>
+    <button id="btn-ver" class="btn btn-amarelo">Ver pedido</button>
+  </footer>
+
+<dialog id="modal-carrinho">
+    <h2>Seu pedido</h2>
+    <ul id="lista-carrinho" class="lista"></ul>
+    <fieldset class="tipo">
+      <legend>Como você quer receber?</legend>
+      <label class="opcao"><input type="radio" name="tipo" value="balcao" checked> 🏪 Retirar no balcão</label>
+      <label class="opcao"><input type="radio" name="tipo" value="entrega"> 🛵 Entrega</label>
+    </fieldset>
+
+    <fieldset class="tipo" id="bloco-agendar" hidden>
+      <legend>Quando você quer?</legend>
+      <label class="opcao"><input type="radio" name="quando" value="agora" checked> ⚡ O quanto antes</label>
+      <label class="opcao"><input type="radio" name="quando" value="agendar"> 📅 Agendar</label>
+      <select id="cli-horario" hidden></select>
+    </fieldset>
+
+    <!-- Campo Nome (visível sempre) -->
+    <label class="obs">Seu nome
+      <input id="cli-nome" maxlength="60" autocomplete="name" placeholder="Informe o seu nome" required>
+    </label>
+
+    <!-- Campo Telefone (FORA DO BLOCO DE ENTREGA - VISÍVEL SEMPRE) -->
+    <label class="obs">Telefone com DDD (WhatsApp)
+      <input id="cli-telefone" type="tel" inputmode="tel" autocomplete="tel" maxlength="20" placeholder="(87) 99999-9999" required>
+    </label>
+
+    <!-- Apenas o Endereço fica oculto no Balcão -->
+    <div id="campos-entrega" hidden>
+      <label class="obs">Rua / Avenida
+        <input id="cli-rua" maxlength="80" autocomplete="address-line1" placeholder="Ex.: Rua das Flores">
+      </label>
+      <div class="linha-campos">
+        <label class="obs campo-numero">Número
+          <input id="cli-numero" maxlength="10" inputmode="numeric" autocomplete="off" placeholder="Ex.: 120">
+        </label>
+        <label class="obs campo-bairro">Bairro
+          <input id="cli-bairro" maxlength="60" autocomplete="address-level3" placeholder="Ex.: Centro">
+          <select id="cli-bairro-lista" hidden></select>
+        </label>
+      </div>
+      <label class="check-linha"><input id="cli-sem-numero" type="checkbox"> Endereço sem número (S/N)</label>
+      <label class="obs">Complemento <small>(opcional)</small>
+        <input id="cli-complemento" maxlength="60" autocomplete="address-line2" placeholder="Apto, bloco, casa dos fundos...">
+      </label>
+      <label class="obs">Ponto de referência <small>(opcional)</small>
+        <input id="cli-referencia" maxlength="100" autocomplete="off" placeholder="Ex.: perto da padaria, portão azul">
+      </label>
+    </div>
+
+    <label class="check-linha"><input id="cli-lembrar" type="checkbox" checked> Lembrar meus dados neste aparelho</label>
+
+    <fieldset class="tipo" id="pagamento">
+      <legend>Forma de pagamento <small>(paga na entrega/retirada)</small></legend>
+      <div id="opcoes-pagamento" class="opcoes-pagamento"></div>
+    </fieldset>
+    <div id="campo-troco" hidden>
+      <label class="obs">Troco para quanto? <small>(deixe vazio se não precisar)</small>
+        <input id="troco" inputmode="decimal" maxlength="10" placeholder="Ex.: 50,00">
+      </label>
+    </div>
+
+    <label class="obs">Observações
+      <input id="obs" maxlength="200" placeholder="Ex.: sem cebola">
+    </label>
+    <div class="cupom-box">
+      <label class="obs">Cupom de desconto <small>(opcional)</small>
+        <span class="cupom-linha">
+          <input id="cupom" maxlength="20" placeholder="Ex.: PRIMEIRA10" autocapitalize="characters" autocomplete="off" spellcheck="false">
+          <button id="btn-cupom" type="button" class="btn btn-claro">Aplicar</button>
+        </span>
+      </label>
+      <p id="msg-cupom" class="msg-cupom" role="status" hidden></p>
+    </div>
+    <p id="msg-fid" class="msg-cupom msg-fid" role="status" hidden></p>
+    <p id="linha-fid" class="linha-valores desconto" hidden><span>Fidelidade 🎁</span><strong id="fid-valor"></strong></p>
+    <p id="linha-desconto" class="linha-valores desconto" hidden><span>Desconto (<b id="desc-codigo"></b>)</span><strong id="desc-valor"></strong></p>
+    <p id="linha-taxa" class="linha-valores" hidden><span>Taxa de entrega</span><strong id="taxa-valor"></strong></p>
+    <p id="aviso-minimo" class="msg-minimo" role="status" hidden></p>
+    <p class="total">Total: <strong id="total"></strong></p>
+    <div class="acoes">
+      <button id="btn-finalizar" class="btn btn-vermelho">Finalizar pedido</button>
+      <button id="btn-voltar" class="btn btn-claro">Continuar pedindo</button>
+    </div>
+  </dialog>
+
+  <dialog id="modal-opcoes">
+    <h2 id="opcoes-titulo"></h2>
+    <div id="opcoes-extras" class="grupo-opcoes" hidden>
+      <h3>Adicionais</h3>
+      <div id="opcoes-extras-lista"></div>
+    </div>
+    <div id="opcoes-sem" class="grupo-opcoes" hidden>
+      <h3>Quer tirar algo?</h3>
+      <div id="opcoes-sem-lista"></div>
+    </div>
+    <div class="acoes-opcoes">
+      <button id="opcoes-cancelar" type="button" class="btn btn-claro">Cancelar</button>
+      <button id="opcoes-adicionar" type="button" class="btn btn-vermelho"></button>
+    </div>
+  </dialog>
+
+  <dialog id="modal-senha">
+    <h2>Pedido recebido! 🎉</h2>
+    <p>Sua senha:</p>
+    <div id="senha" class="senha"></div>
+    <p id="msg-senha">Aguarde ser chamado no balcão.</p>
+    <p><a id="link-acompanhar" class="btn btn-claro" href="#" hidden>📍 Acompanhar meu pedido</a></p>
+    <button id="btn-novo" class="btn btn-vermelho">Novo pedido</button>
+  </dialog>
+
+  <script src="{{ asset('app.js') }}"></script>
+  <script src="{{ asset('pwa.js') }}" defer></script>
+</body>
+</html>

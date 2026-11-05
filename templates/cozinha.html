@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="csrf-token" content="{{ csrf }}">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Cozinha - {{ nome }}</title>
+  <link rel="stylesheet" href="{{ asset('cozinha.css') }}">
+</head>
+<body>
+  <header class="topo">
+    <h1>🍳 Cozinha — {{ nome }}</h1>
+    <span id="relogio" class="relogio"></span>
+    <label class="som"><input type="checkbox" id="som" checked> 🔔 Som</label>
+    <button id="btn-tela" type="button">⛶ Tela cheia</button>
+    <a href="/admin" class="voltar">← Painel</a>
+  </header>
+  <p id="aviso" class="aviso" hidden></p>
+  <main class="quadro">
+    <section class="coluna">
+      <h2>Novos <span id="cont-novo" class="cont">0</span></h2>
+      <div id="col-novo" class="lista"></div>
+    </section>
+    <section class="coluna">
+      <h2>Fazendo <span id="cont-fazendo" class="cont">0</span></h2>
+      <div id="col-fazendo" class="lista"></div>
+    </section>
+    <section class="coluna estreita">
+      <h2>Prontos <span id="cont-pronto" class="cont">0</span></h2>
+      <div id="col-pronto" class="lista"></div>
+    </section>
+  </main>
+  <script src="{{ asset('cozinha.js') }}" defer></script>
+</body>
+</html>

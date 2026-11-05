@@ -1,0 +1,11 @@
+.env
+dados/
+static/uploads/
+venv/
+__pycache__/
+*.pyc
+*.migrado
+   node_modules/
+   ponte_whatsapp/auth/
+   *.log
+   backups/

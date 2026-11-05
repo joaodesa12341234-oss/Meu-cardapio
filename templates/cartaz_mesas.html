@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Cartazes das mesas - {{ loja }}</title>
+  <link rel="stylesheet" href="{{ asset('cartaz.css') }}">
+</head>
+<body data-mesas="{{ mesas }}" data-loja="{{ loja }}">
+  <section class="controles">
+    <label>Endereço do cardápio (o que o QR code abre)
+      <input id="url" type="url" value="{{ url }}" maxlength="200" spellcheck="false">
+    </label>
+    <p id="aviso" class="aviso" hidden></p>
+    <p id="sem-mesas" class="aviso" {% if mesas %}hidden{% endif %}>Nenhuma mesa cadastrada. Na aba Loja, informe a quantidade de mesas e salve.</p>
+    <button id="btn-imprimir" type="button">🖨 Imprimir todos os cartazes ({{ mesas }})</button>
+  </section>
+  <div id="cartazes"></div>
+  <script src="{{ asset('qrcode.js') }}" defer></script>
+  <script src="{{ asset('cartaz-mesas.js') }}" defer></script>
+</body>
+</html>

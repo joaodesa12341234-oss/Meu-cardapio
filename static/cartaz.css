@@ -1,0 +1,23 @@
+body { font-family: system-ui, sans-serif; margin: 0; background: #f1f5f9; color: #111; }
+.controles { max-width: 560px; margin: 16px auto; padding: 0 16px; display: grid; gap: 10px; }
+.controles label { display: grid; gap: 6px; font-weight: 700; }
+.controles input { padding: 10px; font-size: 1rem; border: 1px solid #94a3b8; border-radius: 8px; }
+.controles button { padding: 12px; font-size: 1rem; font-weight: 700; background: #dc2626; color: #fff; border: 0; border-radius: 8px; cursor: pointer; }
+.aviso { background: #fef3c7; border: 1px solid #f59e0b; border-radius: 8px; padding: 10px; margin: 0; }
+.aviso[hidden] { display: none; }
+.cartaz { background: #fff; width: 100%; max-width: 560px; margin: 0 auto 24px; padding: 32px 24px; box-sizing: border-box; text-align: center; border-radius: 12px; }
+.cartaz h1 { margin: 0 0 4px; font-size: 2rem; }
+.chamada { font-size: 1.5rem; font-weight: 800; color: #dc2626; margin: 0 0 16px; }
+.cartaz canvas { width: 80%; max-width: 380px; height: auto; image-rendering: pixelated; }
+.passo { font-size: 1.1rem; margin: 12px 0 4px; }
+.url-texto { font-size: .85rem; color: #475569; word-break: break-all; margin: 0; }
+@media print {
+  body { background: #fff; }
+  .controles { display: none; }
+  .cartaz { max-width: none; margin: 0; border-radius: 0; padding-top: 12mm; }
+  .cartaz h1 { font-size: 3rem; } .chamada { font-size: 2.2rem; } .passo { font-size: 1.5rem; }
+  .cartaz canvas { width: 70%; max-width: 150mm; }
+  .url-texto { font-size: 1rem; }
+}
+.mesa-numero { margin: 0 0 6px; font-size: 3rem; font-weight: 900; color: #111; }
+@media print { .cartaz-mesa { page-break-after: always; break-after: page; min-height: 250mm; } .mesa-numero { font-size: 5rem; } }

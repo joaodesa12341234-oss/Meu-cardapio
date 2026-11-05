@@ -1,0 +1,58 @@
+{
+  "lanchonete": "Lanchonete do Zé",
+  "categorias": [
+    {
+      "id": "lanches",
+      "nome": "Lanches",
+      "icone": "🍔",
+      "produtos": [
+        {"id": "x-burger", "nome": "X-Burger", "descricao": "Pão, hambúrguer 120g, queijo e molho da casa.", "preco": 18.90, "emoji": "🍔"},
+        {"id": "x-bacon", "nome": "X-Bacon", "descricao": "Hambúrguer 120g, queijo, bacon crocante e maionese.", "preco": 23.90, "emoji": "🥓"},
+        {"id": "x-duplo", "nome": "Duplo Cheddar", "descricao": "Dois hambúrgueres, cheddar cremoso e cebola caramelizada.", "preco": 29.90, "emoji": "🧀"},
+        {"id": "frango-crispy", "nome": "Frango Crocante", "descricao": "Filé de frango empanado, alface e maionese.", "preco": 21.90, "emoji": "🍗"}
+      ]
+    },
+    {
+      "id": "combos",
+      "nome": "Combos",
+      "icone": "🍟",
+      "produtos": [
+        {"id": "combo-classico", "nome": "Combo Clássico", "descricao": "X-Burger + batata média + refri 300ml.", "preco": 29.90, "emoji": "🍔"},
+        {"id": "combo-bacon", "nome": "Combo Bacon", "descricao": "X-Bacon + batata média + refri 300ml.", "preco": 34.90, "emoji": "🥓"},
+        {"id": "combo-kids", "nome": "Combo Kids", "descricao": "Mini burger + batata pequena + suco + brinde.", "preco": 24.90, "emoji": "🎁"}
+      ]
+    },
+    {
+      "id": "acompanhamentos",
+      "nome": "Acompanhamentos",
+      "icone": "🍟",
+      "produtos": [
+        {"id": "batata-p", "nome": "Batata Pequena", "descricao": "Batata frita sequinha e crocante.", "preco": 8.90, "emoji": "🍟"},
+        {"id": "batata-m", "nome": "Batata Média", "descricao": "Porção média de batata frita.", "preco": 12.90, "emoji": "🍟"},
+        {"id": "nuggets", "nome": "Nuggets (8un)", "descricao": "Acompanha molho barbecue.", "preco": 15.90, "emoji": "🍗"},
+        {"id": "aneis", "nome": "Anéis de Cebola", "descricao": "Empanados e super crocantes.", "preco": 13.90, "emoji": "🧅"}
+      ]
+    },
+    {
+      "id": "bebidas",
+      "nome": "Bebidas",
+      "icone": "🥤",
+      "produtos": [
+        {"id": "refri-300", "nome": "Refrigerante 300ml", "descricao": "Cola, guaraná ou limão.", "preco": 6.50, "emoji": "🥤"},
+        {"id": "refri-500", "nome": "Refrigerante 500ml", "descricao": "Cola, guaraná ou limão.", "preco": 9.00, "emoji": "🥤"},
+        {"id": "suco", "nome": "Suco Natural", "descricao": "Laranja ou maracujá, 400ml.", "preco": 10.00, "emoji": "🍊"},
+        {"id": "agua", "nome": "Água Mineral", "descricao": "500ml, com ou sem gás.", "preco": 4.00, "emoji": "💧"}
+      ]
+    },
+    {
+      "id": "sobremesas",
+      "nome": "Sobremesas",
+      "icone": "🍦",
+      "produtos": [
+        {"id": "sorvete", "nome": "Casquinha", "descricao": "Sorvete de baunilha na casquinha.", "preco": 5.00, "emoji": "🍦"},
+        {"id": "sundae", "nome": "Sundae", "descricao": "Sorvete com calda de chocolate ou morango.", "preco": 11.90, "emoji": "🍨"},
+        {"id": "donut", "nome": "Rosquinha Glaceada", "descricao": "Feita na hora, com cobertura colorida.", "preco": 7.90, "emoji": "🍩"}
+      ]
+    }
+  ]
+}

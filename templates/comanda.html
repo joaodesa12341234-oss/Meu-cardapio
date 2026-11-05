@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Comanda #{{ '%03d' % p.senha }}</title>
+  <link rel="stylesheet" href="{{ asset('comanda.css') }}">
+</head>
+<body>
+  <main class="comanda">
+    <h1>{{ loja }}</h1>
+    <p class="senha">#{{ '%03d' % p.senha }}</p>
+    <p class="tipo">{{ 'ENTREGA' if p.tipo == 'entrega' else ('MESA ' ~ p.mesa if p.mesa else 'RETIRADA NO BALCÃO') }}</p>
+    <p class="meta">{{ hora.strftime('%d/%m/%Y %H:%M') }}</p>
+    {% if agendado %}<p class="tipo">AGENDADO PARA {{ agendado.strftime('%d/%m %H:%M') }}</p>{% endif %}
+    <hr>
+    <ul class="itens">
+      {% for i in itens %}
+      <li><span>{{ i.qtd }}x {{ i.nome }}{% if i.opcoes %}<br><small>{{ i.opcoes }}</small>{% endif %}</span><span>R$ {{ '%.2f'|format(i.qtd * i.preco_centavos / 100)|replace('.', ',') }}</span></li>
+      {% endfor %}
+    </ul>
+    {% if p.observacao %}<p class="obs">OBS: {{ p.observacao }}</p>{% endif %}
+    <hr>
+    {% if p.desconto_centavos %}
+    <p class="linha"><span>Cupom {{ p.cupom }}</span><span>- R$ {{ '%.2f'|format(p.desconto_centavos / 100)|replace('.', ',') }}</span></p>
+    {% endif %}
+    {% if p.fidelidade_centavos %}
+    <p class="linha"><span>Fidelidade</span><span>- R$ {{ '%.2f'|format(p.fidelidade_centavos / 100)|replace('.', ',') }}</span></p>
+    {% endif %}
+    {% if p.taxa_entrega_centavos %}
+    <p class="linha"><span>Taxa de entrega</span><span>R$ {{ '%.2f'|format(p.taxa_entrega_centavos / 100)|replace('.', ',') }}</span></p>
+    {% endif %}
+    <p class="linha total"><span>TOTAL</span><span>R$ {{ '%.2f'|format(p.total_centavos / 100)|replace('.', ',') }}</span></p>
+    <p class="pg">Pagamento: <strong>{{ pagamentos.get(p.pagamento, 'não informado') }}</strong>
+      {% if p.pagamento == 'dinheiro' and p.troco_para_centavos %}<br>Troco para R$ {{ '%.2f'|format(p.troco_para_centavos / 100)|replace('.', ',') }}
+      (devolver R$ {{ '%.2f'|format((p.troco_para_centavos - p.total_centavos) / 100)|replace('.', ',') }}){% endif %}</p>
+    <hr>
+    <p class="cliente">{{ p.nome }}<br>{{ p.telefone }}</p>
+    {% if p.tipo == 'entrega' %}
+      {% if p.rua %}
+      <p class="cliente"><strong>{{ p.rua }}, {{ p.numero }}</strong><br>Bairro: {{ p.bairro }}
+        {% if p.complemento %}<br>Compl.: {{ p.complemento }}{% endif %}
+        {% if p.referencia %}<br>Ref.: {{ p.referencia }}{% endif %}</p>
+      {% else %}<p class="cliente">{{ p.endereco }}</p>{% endif %}
+    {% endif %}
+    <button id="btn-imprimir" class="nao-imprimir" type="button">🖨 Imprimir</button>
+  </main>
+  <script src="{{ asset('comanda.js') }}" defer></script>
+</body>
+</html>

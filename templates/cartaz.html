@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Cartaz - {{ loja }}</title>
+  <link rel="stylesheet" href="{{ asset('cartaz.css') }}">
+</head>
+<body>
+  <section class="controles">
+    <label>Endereço do cardápio (o que o QR code abre)
+      <input id="url" type="url" value="{{ url }}" maxlength="200" spellcheck="false">
+    </label>
+    <p id="aviso" class="aviso" hidden></p>
+    <button id="btn-imprimir" type="button">🖨 Imprimir cartaz</button>
+  </section>
+
+  <main class="cartaz">
+    <h1>{{ loja }}</h1>
+    <p class="chamada">Peça pelo celular!</p>
+    <canvas id="qr" aria-label="QR code do cardápio"></canvas>
+    <p class="passo">Aponte a câmera do celular para o código</p>
+    <p id="url-texto" class="url-texto"></p>
+  </main>
+
+  <script src="{{ asset('qrcode.js') }}" defer></script>
+  <script src="{{ asset('cartaz.js') }}" defer></script>
+</body>
+</html>

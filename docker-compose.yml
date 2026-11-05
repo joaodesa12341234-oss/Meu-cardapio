@@ -1,0 +1,51 @@
+# Evolution API (WhatsApp). Defina as senhas em um arquivo .env ao lado deste (veja .env.example).
+# Nenhuma porta de banco/cache é publicada: só a API, e apenas em 127.0.0.1.
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: evolution_redis
+    restart: always
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD:?defina REDIS_PASSWORD no .env}"]
+    volumes:
+      - redis_data:/data
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: evolution_postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=evolution
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+      - POSTGRES_DB=evolution
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  evolution-api:
+    # Fixe uma versão testada (troque pela que você usa) em vez de :latest
+    image: evoapicloud/evolution-api:${EVOLUTION_VERSION:-v2.3.7}
+    container_name: evolution_api
+    restart: always
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      - SERVER_URL=http://localhost:8080
+      - DOCKER_ENV=true
+      - AUTHENTICATION_TYPE=apikey
+      - AUTHENTICATION_API_KEY=${EVOLUTION_API_KEY:?defina EVOLUTION_API_KEY no .env}
+      - CACHE_REDIS_ENABLED=true
+      - CACHE_REDIS_URI=redis://:${REDIS_PASSWORD}@redis:6379
+      - CACHE_REDIS_PREFIX_KEY=ev
+      - DATABASE_PROVIDER=postgresql
+      - DATABASE_CONNECTION_URI=postgresql://evolution:${POSTGRES_PASSWORD}@postgres:5432/evolution?schema=public
+      - LOG_LEVEL=ERROR,WARN,INFO
+      - LOG_COLOR=true
+    volumes:
+      - evolution_instances:/evolution/instances
+    depends_on:
+      - redis
+      - postgres
+
+volumes:
+  redis_data:
+  postgres_data:
+  evolution_instances:

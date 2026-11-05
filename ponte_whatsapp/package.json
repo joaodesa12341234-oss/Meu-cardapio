@@ -1,0 +1,14 @@
+{
+  "name": "ponte-whatsapp",
+  "version": "1.0.0",
+  "description": "Ponte leve que imita a Evolution API (sem Docker) usando Baileys",
+  "main": "ponte.js",
+  "private": true,
+  "scripts": { "start": "node ponte.js", "test": "node teste.js" },
+  "engines": { "node": ">=18" },
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.9",
+    "pino": "^9.0.0",
+    "qrcode-terminal": "^0.12.0"
+  }
+}
